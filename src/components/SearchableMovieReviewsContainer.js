@@ -12,18 +12,40 @@ class SearchableMovieReviewsContainer extends React.Component {
     super()
 
     this.state = {
+      searchTerm: '',
       reviews: []
     };
   }
 
-  // componentDidMount() {
-  //   fetch('https://learn-co-curriculum.github.io/books-json-example-api/books.json')
-  //     .then(response => response.json())
-  //     .then(bookData => this.setState({ books: bookData.books }))
-  // }
+  handleSearchInputChange = event =>
+    this.setState({ searchTerm: event.target.value });
+
+  handleSubmit = event => {
+    event.preventDefault();
+
+    fetch(URL.concat(this.state.searchTerm))
+      .then(res => res.json())
+      .then(res => this.setState({ reviews: res.results }));
+  };
 
   render() {
-    return <MovieReviews />
+    return (
+      <div className="searchable-movie-reviews">
+        <form onSubmit={this.handleSubmit}>
+          <label htmlFor="search-input">Search Movie Reviews</label>
+          <input
+            id="search-input"
+            type="text"
+            style={{ width: 300 }}
+            onChange={this.handleSearchInputChange}
+          />
+          <button type="submit">Submit</button>
+        </form>
+        {typeof this.state.reviews === 'object' &&
+          this.state.reviews.length > 0 && <h2>Movie Review By Search:</h2>}
+        <MovieReviews reviews={this.state.reviews} />
+      </div>
+    );
   }
 }
 
